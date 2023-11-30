@@ -1,1 +1,1 @@
-# barbados-workshop-2024
+# Barbados Workshop 2024
