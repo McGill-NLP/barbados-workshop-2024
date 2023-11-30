@@ -12,3 +12,6 @@ python3 scripts/load_participant.py \
 This script checks whether an image exists in `assets/participants` for each participant.
 Each image should use the naming scheme `{first_name}_{last_name}.*` where `first_name` and `last_name` are all lowercase (and correspond to a record in the CSV).
 Last names consisting of multiple words are delimited by `-`.
+
+## Build
+GitHub pages points to the `main` branch. Any new commits to this branch will trigger a deployment.
