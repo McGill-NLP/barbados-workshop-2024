@@ -24,13 +24,18 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-_PARTICIPANT_LIST_TEMPLATE = r'<li><a href="{url}" target="_blank"><img src="{image_file_path}" />{name}</a>({affiliation})</li>'
+_PARTICIPANT_TEMPLATE = r'<li><a href="{url}" target="_blank"><img src="{image_file_path}" />{name}</a>{is_organizer}({affiliation})</li>'
 
 html = r'<ul class="faces">' + "\n"
 with open(args.input_file, "r") as f:
     reader = csv.DictReader(f)
 
-    for row in reader:
+    # Sort by last name with organizers first.
+    sorted_rows = sorted(
+        reader, key=lambda row: (not int(row["is_organizer"]), row["last_name"].lower())
+    )
+
+    for row in sorted_rows:
         # Normalize names to match image file names.
         normalized_first_name = (
             row["first_name"].lower().replace(" ", "-").replace("'", "-")
@@ -52,12 +57,19 @@ with open(args.input_file, "r") as f:
         else:
             image_file_path = glob_image_files[0]
 
+        # Mark organizers.
+        if int(row["is_organizer"]):
+            is_organizer = "<b>Organizer</b><br />"
+        else:
+            is_organizer = ""
+
         html += (
             "\t"
-            + _PARTICIPANT_LIST_TEMPLATE.format(
+            + _PARTICIPANT_TEMPLATE.format(
                 url=row["url"],
                 image_file_path=image_file_path,
                 name=f"{row['first_name']} {row['last_name']}",
+                is_organizer=is_organizer,
                 affiliation=row["affiliation"],
             )
             + "\n"
